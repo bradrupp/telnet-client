@@ -38,7 +38,7 @@ const (
 var loginRe *regexp.Regexp = regexp.MustCompile("[\\w\\d-_]+ login:")
 var passwordRe *regexp.Regexp = regexp.MustCompile("Password:")
 var bannerRe *regexp.Regexp = regexp.MustCompile(
-	"[\\w\\d-_]+@[\\w\\d-_]+:[\\w\\d/-_~]+(\\$|#)")
+	"[\\w\\d-_]+@[\\w\\d-_]+:[\\w\\d/-_~]+(\\$|#|>)")
 
 // TelnetClient is basic descriptor
 type TelnetClient struct {
