@@ -35,10 +35,10 @@ const (
 	DONT = 254
 )
 
-var loginRe *regexp.Regexp = regexp.MustCompile("[\\w\\d-_]+ login:")
-var passwordRe *regexp.Regexp = regexp.MustCompile("Password:")
-var bannerRe *regexp.Regexp = regexp.MustCompile(
-	"[\\w\\d-_]+@[\\w\\d-_]+:[\\w\\d/-_~]+(\\$|#|>)")
+var loginRe *regexp.Regexp = regexp.MustCompile("user:")
+var passwordRe *regexp.Regexp = regexp.MustCompile("password:")
+//var bannerRe *regexp.Regexp = regexp.MustCompile("[\\w\\d-_]+@[\\w\\d-_]+:[\\w\\d/-_~]+(\\$|#|>)")
+var bannerRe *regexp.Regexp = regexp.MustCompile("(WASATCH 100)|(Wasatch 100)|(W100)|(c race)")
 
 // TelnetClient is basic descriptor
 type TelnetClient struct {
@@ -247,7 +247,7 @@ func (tc *TelnetClient) ReadUntilBanner() (output []byte, err error) {
 
 func (tc *TelnetClient) findInputPrompt(
 	re *regexp.Regexp,
-	responce string,
+	response string,
 	buffer []byte,
 ) bool {
 	match := re.Find(buffer)
@@ -255,7 +255,7 @@ func (tc *TelnetClient) findInputPrompt(
 		return false
 	}
 
-	tc.Write([]byte(responce + "\r\n"))
+	tc.Write([]byte(response + "\r\n"))
 
 	return true
 }
