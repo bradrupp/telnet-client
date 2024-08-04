@@ -1,3 +1,3 @@
-module github.com/dxjones/telnet-client
+module github.com/bradrupp/telnet-client
 
 go 1.22
