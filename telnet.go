@@ -37,7 +37,8 @@ const (
 
 var loginRe *regexp.Regexp = regexp.MustCompile("user:")
 var passwordRe *regexp.Regexp = regexp.MustCompile("password:")
-//var bannerRe *regexp.Regexp = regexp.MustCompile("[\\w\\d-_]+@[\\w\\d-_]+:[\\w\\d/-_~]+(\\$|#|>)")
+
+// var bannerRe *regexp.Regexp = regexp.MustCompile("[\\w\\d-_]+@[\\w\\d-_]+:[\\w\\d/-_~]+(\\$|#|>)")
 var bannerRe *regexp.Regexp = regexp.MustCompile("(WASATCH 100)|(Wasatch 100)|(W100)|(c race)")
 
 // TelnetClient is basic descriptor
@@ -251,6 +252,9 @@ func (tc *TelnetClient) findInputPrompt(
 	buffer []byte,
 ) bool {
 	match := re.Find(buffer)
+
+	tc.log("Buffer: %s, regex: %s, match: %s", string(buffer), re.String(), string(match))
+
 	if len(match) == 0 {
 		return false
 	}
