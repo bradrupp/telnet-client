@@ -44,7 +44,7 @@ var loginRe *regexp.Regexp = regexp.MustCompile("user:")
 var passwordRe *regexp.Regexp = regexp.MustCompile("password:")
 
 // var bannerRe *regexp.Regexp = regexp.MustCompile("[\\w\\d-_]+@[\\w\\d-_]+:[\\w\\d/-_~]+(\\$|#|>)")
-var bannerRe *regexp.Regexp = regexp.MustCompile("(WASATCH 100)|(Wasatch 100)|(W100)|(c race)")
+var bannerRe *regexp.Regexp = regexp.MustCompile("WASATCH 100|Wasatch 100|W100|c race")
 
 // TelnetClient is basic descriptor
 type TelnetClient struct {
@@ -292,7 +292,7 @@ func (tc *TelnetClient) waitWelcomeSigns() (err error) {
 		}
 
 		m := bannerRe.Find(data)
-		tc.log("Banner: %s", string(m))
+		tc.log("Buffer: %s, Match: %s", string(data), string(m))
 		return len(m) > 0
 	})
 
