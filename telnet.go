@@ -1,3 +1,7 @@
+// This telnet client has been specialized for the telnet server that runs
+// in the BPQ packet node software. The BPQ software is used extensively
+// for the Wasatch 100 ultra marathon where this telnet client is being used.
+
 package telnet
 
 import (
@@ -6,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -161,13 +166,20 @@ func (tc *TelnetClient) ReadByte() (b byte, err error) {
 
 // ReadUntil reads bytes until a specific symbol.
 // Delimiter character will be written to result buffer
-func (tc *TelnetClient) ReadUntil(data *[]byte, delim byte) (n int, err error) {
-	var b byte
+func (tc *TelnetClient) ReadUntil(data *[]byte, slDelims []byte) (n int, err error) {
+	var (
+		b     byte
+		found bool
+	)
 
-	for b != delim {
+	for !found {
 		b, err = tc.ReadByte()
 		if err != nil {
 			break
+		}
+
+		if slices.Contains(slDelims, b) {
+			found = true
 		}
 
 		*data = append(*data, b)
@@ -204,6 +216,8 @@ func (tc *TelnetClient) ReadUntilPrompt(
 	var linePos int
 	var chunk []byte
 
+	slDelims := []byte{':', '>'}
+
 	output = make([]byte, 0, 64*1024)
 
 	for {
@@ -212,7 +226,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 		// prompt has ':' or whitespace in end of line.
 		// However, may be cases which have another behaviors.
 		// So client may freeze
-		n, err = tc.ReadUntil(&output, ' ')
+		n, err = tc.ReadUntil(&output, slDelims)
 		if err != nil {
 			return
 		}
