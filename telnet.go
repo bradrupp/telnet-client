@@ -216,7 +216,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 	var linePos int
 	var chunk []byte
 
-	slDelims := []byte{':', '>'}
+	slDelims := []byte{':', '>', '\n'}
 
 	output = make([]byte, 0, 64*1024)
 
@@ -292,6 +292,7 @@ func (tc *TelnetClient) waitWelcomeSigns() (err error) {
 		}
 
 		m := bannerRe.Find(data)
+		tc.log("Banner: %s", string(m))
 		return len(m) > 0
 	})
 
