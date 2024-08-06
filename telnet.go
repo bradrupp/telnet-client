@@ -238,6 +238,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 		}
 
 		chunk = output[linePos:delimPos]
+		tc.log("Output: %s, 1: %d, 2: %d, chunk: %s", string(output), linePos, delimPos, string(chunk))
 
 		if process(chunk) {
 			break
