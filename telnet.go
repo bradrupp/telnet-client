@@ -231,8 +231,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 			return
 		}
 
-		//delimPos += n
-		delimPos += (n + 1)
+		delimPos += n
 
 		// n = findNewLinePos(output)
 		// if n != -1 {
