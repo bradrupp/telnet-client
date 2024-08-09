@@ -216,7 +216,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 	var linePos int
 	var chunk []byte
 
-	slDelims := []byte{':', '>', '\n'}
+	slDelims := []byte{'>'}
 
 	output = make([]byte, 0, 64*1024)
 
@@ -233,13 +233,12 @@ func (tc *TelnetClient) ReadUntilPrompt(
 
 		delimPos += n
 
-		// n = findNewLinePos(output)
-		// if n != -1 {
-		// 	linePos = n + 2
-		// }
+		n = findNewLinePos(output)
+		if n != -1 {
+			linePos = n + 2
+		}
 
 		chunk = output[linePos:delimPos]
-		linePos = delimPos
 
 		tc.log("Output: %s, 1: %d, 2: %d, chunk: %s", string(output), linePos, delimPos, string(chunk))
 
