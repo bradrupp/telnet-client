@@ -184,6 +184,8 @@ func (tc *TelnetClient) ReadUntil(data *[]byte, slDelims []byte) (n int, err err
 
 		*data = append(*data, b)
 		n++
+
+		tc.log("ReadUntil()): Data: %s", string(*data))
 	}
 
 	return
@@ -240,7 +242,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 
 		chunk = output[linePos:delimPos]
 
-		tc.log("Output: %s, 1: %d, 2: %d, chunk: %s", string(output), linePos, delimPos, string(chunk))
+		tc.log("ReadUntilPrompt(): Output: %s, 1: %d, 2: %d, chunk: %s", string(output), linePos, delimPos, string(chunk))
 
 		if process(chunk) {
 			break
