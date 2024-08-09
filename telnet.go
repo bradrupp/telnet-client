@@ -218,7 +218,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 	var linePos int
 	var chunk []byte
 
-	slDelims := []byte{'>'}
+	slDelims := []byte{'>', ':'}
 
 	output = make([]byte, 0, 64*1024)
 
