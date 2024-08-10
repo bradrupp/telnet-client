@@ -184,8 +184,6 @@ func (tc *TelnetClient) ReadUntil(data *[]byte, slDelims []byte) (n int, err err
 
 		*data = append(*data, b)
 		n++
-
-		tc.log("ReadUntil()): Data: %s", string(*data))
 	}
 
 	return
@@ -272,7 +270,7 @@ func (tc *TelnetClient) findInputPrompt(
 ) bool {
 	match := re.Find(buffer)
 
-	tc.log("Buffer: %s, regex: %s, match: %s", string(buffer), re.String(), string(match))
+	tc.log("findInputPrompt(): Buffer: %s, regex: %s, match: %s", string(buffer), re.String(), string(match))
 
 	if len(match) == 0 {
 		return false
@@ -297,7 +295,7 @@ func (tc *TelnetClient) waitWelcomeSigns() (err error) {
 		}
 
 		m := bannerRe.Find(data)
-		tc.log("Buffer: %s, Match: %s", string(data), string(m))
+		tc.log("waitWelcomeSigns(): Buffer: %s, Match: %s", string(data), string(m))
 		return len(m) > 0
 	})
 
