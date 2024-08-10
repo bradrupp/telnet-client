@@ -233,14 +233,15 @@ func (tc *TelnetClient) ReadUntilPrompt(
 
 		delimPos += n
 
-		n = findNewLinePos(output)
-		if n != -1 {
-			linePos = n + 2
-		}
+		// n = findNewLinePos(output)
+		// if n != -1 {
+		// 	linePos = n + 2
+		// }
 
 		chunk = output[linePos:delimPos]
-
-		tc.log("ReadUntilPrompt(): Output: %s, 1: %d, 2: %d, chunk: %s", string(output), linePos, delimPos, string(chunk))
+		
+		tc.log("ReadUntilPrompt(): Output: %s, Begin: %d, End: %d, Chunk: %s", string(output), linePos, delimPos, string(chunk))
+		linePos = delimPos
 
 		if process(chunk) {
 			break
