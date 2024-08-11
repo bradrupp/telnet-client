@@ -91,13 +91,13 @@ func (tc *TelnetClient) Dial() (err error) {
 
 	tc.reader = bufio.NewReader(tc.conn)
 	tc.writer = bufio.NewWriter(tc.conn)
-	err = tc.conn.SetReadDeadline(time.Now().Add(tc.Timeout))
-	if err != nil {
-		return
-	}
+	// err = tc.conn.SetReadDeadline(time.Now().Add(tc.Timeout))
+	// if err != nil {
+	// 	return
+	// }
 
 	tc.log("Waiting for the first banner")
-	err = tc.waitWelcomeSigns()
+	err = tc.authenticateAndWaitForBanner()
 
 	return
 }
@@ -218,6 +218,14 @@ func (tc *TelnetClient) ReadUntilPrompt(
 
 	slDelims := []byte{'>', ':'}
 
+	// BR: Move the call to SetReadDeadline from Dial() to ReadUntilPrompt().
+	// This was needed as the read deadline needs to be reset everytime data
+	// is read from the telnet server.
+	err = tc.conn.SetReadDeadline(time.Now().Add(tc.Timeout))
+	if err != nil {
+		return
+	}
+
 	output = make([]byte, 0, 64*1024)
 
 	for {
@@ -239,7 +247,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 		// }
 
 		chunk = output[linePos:delimPos]
-		
+
 		tc.log("ReadUntilPrompt(): Output: %s, Begin: %d, End: %d, Chunk: %s", string(output), linePos, delimPos, string(chunk))
 		linePos = delimPos
 
@@ -284,7 +292,7 @@ func (tc *TelnetClient) findInputPrompt(
 
 // waitWelcomeSigns waits for appearance of the first banner
 // If detect login prompt, it will authorize
-func (tc *TelnetClient) waitWelcomeSigns() (err error) {
+func (tc *TelnetClient) authenticateAndWaitForBanner() (err error) {
 	_, err = tc.ReadUntilPrompt(func(data []byte) bool {
 		if tc.findInputPrompt(loginRe, tc.Login, data) {
 			tc.log("Found login prompt")
@@ -296,7 +304,7 @@ func (tc *TelnetClient) waitWelcomeSigns() (err error) {
 		}
 
 		m := bannerRe.Find(data)
-		tc.log("waitWelcomeSigns(): Buffer: %s, Match: %s", string(data), string(m))
+		tc.log("authenticateAndWaitForBanner(): Buffer: %s, Match: %s", string(data), string(m))
 		return len(m) > 0
 	})
 
