@@ -91,10 +91,6 @@ func (tc *TelnetClient) Dial() (err error) {
 
 	tc.reader = bufio.NewReader(tc.conn)
 	tc.writer = bufio.NewWriter(tc.conn)
-	// err = tc.conn.SetReadDeadline(time.Now().Add(tc.Timeout))
-	// if err != nil {
-	// 	return
-	// }
 
 	tc.log("Waiting for the first banner")
 	err = tc.authenticateAndWaitForBanner()
@@ -103,7 +99,9 @@ func (tc *TelnetClient) Dial() (err error) {
 }
 
 func (tc *TelnetClient) Close() {
-	tc.conn.Close()
+	if nil != tc.conn {
+		tc.conn.Close()
+	}
 }
 
 func (tc *TelnetClient) skipSBSequence() (err error) {
@@ -240,15 +238,7 @@ func (tc *TelnetClient) ReadUntilPrompt(
 		}
 
 		delimPos += n
-
-		// n = findNewLinePos(output)
-		// if n != -1 {
-		// 	linePos = n + 2
-		// }
-
 		chunk = output[linePos:delimPos]
-
-		tc.log("ReadUntilPrompt(): Output: %s, Begin: %d, End: %d, Chunk: %s", string(output), linePos, delimPos, string(chunk))
 		linePos = delimPos
 
 		if process(chunk) {
@@ -278,9 +268,6 @@ func (tc *TelnetClient) findInputPrompt(
 	buffer []byte,
 ) bool {
 	match := re.Find(buffer)
-
-	tc.log("findInputPrompt(): Buffer: %s, regex: %s, match: %s", string(buffer), re.String(), string(match))
-
 	if len(match) == 0 {
 		return false
 	}
@@ -304,7 +291,6 @@ func (tc *TelnetClient) authenticateAndWaitForBanner() (err error) {
 		}
 
 		m := bannerRe.Find(data)
-		tc.log("authenticateAndWaitForBanner(): Buffer: %s, Match: %s", string(data), string(m))
 		return len(m) > 0
 	})
 
